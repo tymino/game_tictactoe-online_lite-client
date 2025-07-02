@@ -1,5 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, type FormEvent } from 'react'
 import { io, Socket } from 'socket.io-client'
+
+import GameRoom from './pages/GameRoom'
+import Lobby from './pages/Lobby'
 
 const socket: Socket = io('http://localhost:4000')
 
@@ -8,22 +11,43 @@ const socket: Socket = io('http://localhost:4000')
 //   room: string
 // }
 
+type TSymbol = 'X' | 'O' | null
+
+interface ISymbol {
+  x: 'X'
+  o: 'O'
+}
+
+const symbols: ISymbol = {
+  x: 'X',
+  o: 'O',
+}
+
 const initialBoard: (null | string)[] = Array(9).fill(null)
 
 const App = () => {
+  const [playerName, setPlayerName] = useState<string>('')
   const [room, setRoom] = useState<string | null>(null)
-  const [playerSymbol, setPlayerSymbol] = useState<'X' | 'O' | null>(null)
+  const [playerSymbol, setPlayerSymbol] = useState<TSymbol>(null)
+
   const [board, setBoard] = useState<(null | string)[]>(initialBoard)
   const [isMyTurn, setIsMyTurn] = useState<boolean>(false)
   const [gameStarted, setGameStarted] = useState<boolean>(false)
   const [waiting, setWaiting] = useState<boolean>(true)
 
   useEffect(() => {
+    socket.on('lobby:update', (players) => {
+      console.log(players)
+    })
+
     socket.on('startGame', ({ room }: { room: string }) => {
-      setRoom(room)
+      console.log(room)
+      console.log('socket')
+
+      // setRoom(room)
       setGameStarted(true)
       // Первый игрок становится X
-      setPlayerSymbol('X')
+      setPlayerSymbol(symbols.x)
       setIsMyTurn(true)
       setWaiting(false)
     })
@@ -96,11 +120,22 @@ const App = () => {
     setIsMyTurn(false)
   }
 
+  const handleSubmitName = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const formData = new FormData(event.currentTarget)
+    const name = formData.get('player-name') as string
+
+    console.log(name)
+
+    socket.emit('player:name', { name })
+  }
+
   return (
     <div className="text-center mt-5">
-      {!room ? (
+      {room ? <GameRoom /> : <Lobby handleSubmitName={handleSubmitName} />}
+      {/* {!room ? (
         <div>
-          <h2 className=''>Лобби</h2>
+          <h2 className="">Лобби</h2>
           {waiting ? (
             <button onClick={handleJoin}>Присоединиться к игре</button>
           ) : (
@@ -128,7 +163,7 @@ const App = () => {
             Сбросить игру
           </button>
         </div>
-      )}
+      )} */}
     </div>
   )
 }

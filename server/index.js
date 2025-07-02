@@ -17,12 +17,22 @@ const io = new Server(server, {
 
 let waitingPlayer = null
 
+const lobbyPlayers = new Map()
+
 io.on('connection', (socket) => {
   console.log('New connection:', socket.id)
 
+  socket.on('player:name', () => {
+    lobbyPlayers.set(socket.id, { name: 'Player' + socket.id.slice(3, 9) })
+    socket.emit('lobby:update', lobbyPlayers)
+
+    console.log('lobbyPlayers', lobbyPlayers)
+  })
+
   if (waitingPlayer) {
     // создаем комнату для двух игроков
-    const roomName = `room-${waitingPlayer.id}-${socket.id}`
+    const roomName = `room-${waitingPlayer.id}_${socket.id}`
+    socket.room = roomName
     socket.join(roomName)
     waitingPlayer.join(roomName)
     io.to(roomName).emit('startGame', { room: roomName })
@@ -32,6 +42,8 @@ io.on('connection', (socket) => {
   }
 
   socket.on('move', ({ index, room }) => {
+    console.log('move', socket.rooms)
+
     socket.to(room).emit('move', index)
   })
 
