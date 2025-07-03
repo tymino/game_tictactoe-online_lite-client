@@ -17,16 +17,23 @@ const io = new Server(server, {
 
 let waitingPlayer = null
 
-const lobbyPlayers = new Map()
+const lobbyPlayers = {}
 
 io.on('connection', (socket) => {
   console.log('New connection:', socket.id)
 
-  socket.on('player:name', () => {
-    lobbyPlayers.set(socket.id, { name: 'Player' + socket.id.slice(3, 9) })
-    socket.emit('lobby:update', lobbyPlayers)
+  lobbyPlayers[socket.id] = { name: `Player_${socket.id.slice(3, 9)}` }
+  io.emit('lobby:update', lobbyPlayers)
 
-    console.log('lobbyPlayers', lobbyPlayers)
+  console.log('lobbyPlayers', lobbyPlayers)
+
+  socket.on('player:name', (name) => {
+    if (name.length > 0) {
+      lobbyPlayers[socket.id].name = name
+      io.emit('lobby:update', lobbyPlayers)
+
+      console.log('lobbyPlayers:', lobbyPlayers)
+    }
   })
 
   if (waitingPlayer) {
@@ -48,6 +55,8 @@ io.on('connection', (socket) => {
   })
 
   socket.on('disconnect', () => {
+    delete lobbyPlayers[socket.id]
+
     console.log('Disconnected:', socket.id)
   })
 })

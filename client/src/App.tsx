@@ -1,4 +1,4 @@
-import { useState, useEffect, type FormEvent } from 'react'
+import { useState, useEffect, type FormEvent, type ChangeEvent } from 'react'
 import { io, Socket } from 'socket.io-client'
 
 import GameRoom from './pages/GameRoom'
@@ -26,7 +26,11 @@ const symbols: ISymbol = {
 const initialBoard: (null | string)[] = Array(9).fill(null)
 
 const App = () => {
+  const [inputNameValue, setInputNameValue] = useState<string>('')
+  const [playerID, setPlayerID] = useState<string>('')
   const [playerName, setPlayerName] = useState<string>('')
+  const [playerList, setPlayerList] = useState({})
+
   const [room, setRoom] = useState<string | null>(null)
   const [playerSymbol, setPlayerSymbol] = useState<TSymbol>(null)
 
@@ -37,12 +41,16 @@ const App = () => {
 
   useEffect(() => {
     socket.on('lobby:update', (players) => {
-      console.log(players)
+      if (socket.id) {
+        setPlayerName(players[socket.id].name)
+        setPlayerID(socket.id)
+        setPlayerList(players)
+      }
     })
 
     socket.on('startGame', ({ room }: { room: string }) => {
-      console.log(room)
-      console.log('socket')
+      // console.log(room)
+      // console.log('socket')
 
       // setRoom(room)
       setGameStarted(true)
@@ -58,59 +66,60 @@ const App = () => {
 
     // Очистка слушателей при размонтировании компоненты
     return () => {
+      socket.off('lobby:update')
       socket.off('startGame')
       socket.off('move')
     }
   })
 
-  const handleJoin = () => {
-    // Соединение уже установлено
-    setWaiting(false)
-  }
+  // const handleJoin = () => {
+  //   // Соединение уже установлено
+  //   setWaiting(false)
+  // }
 
-  const makeMove = (index: number, isMyMove: boolean = true) => {
-    if (board[index] || (!isMyMove && !isMyTurn)) return
+  // const makeMove = (index: number, isMyMove: boolean = true) => {
+  //   if (board[index] || (!isMyMove && !isMyTurn)) return
 
-    const newBoard = [...board] as (null | string)[]
-    newBoard[index] = playerSymbol!
-    setBoard(newBoard)
+  //   const newBoard = [...board] as (null | string)[]
+  //   newBoard[index] = playerSymbol!
+  //   setBoard(newBoard)
 
-    if (isMyMove) {
-      socket.emit('move', { index, room: room! })
-      setIsMyTurn(false)
-    }
-    checkWinner(newBoard)
-  }
+  //   if (isMyMove) {
+  //     socket.emit('move', { index, room: room! })
+  //     setIsMyTurn(false)
+  //   }
+  //   checkWinner(newBoard)
+  // }
 
-  const checkWinner = (boardToCheck: (null | string)[]) => {
-    const lines = [
-      [0, 1, 2],
-      [3, 4, 5],
-      [6, 7, 8],
-      [0, 3, 6],
-      [1, 4, 7],
-      [2, 5, 8],
-      [0, 4, 8],
-      [2, 4, 6],
-    ]
+  // const checkWinner = (boardToCheck: (null | string)[]) => {
+  //   const lines = [
+  //     [0, 1, 2],
+  //     [3, 4, 5],
+  //     [6, 7, 8],
+  //     [0, 3, 6],
+  //     [1, 4, 7],
+  //     [2, 5, 8],
+  //     [0, 4, 8],
+  //     [2, 4, 6],
+  //   ]
 
-    for (const [a, b, c] of lines) {
-      if (
-        boardToCheck[a] &&
-        boardToCheck[a] === boardToCheck[b] &&
-        boardToCheck[a] === boardToCheck[c]
-      ) {
-        alert(`${boardToCheck[a]} wins!`)
-        resetGame()
-        return
-      }
-    }
+  //   for (const [a, b, c] of lines) {
+  //     if (
+  //       boardToCheck[a] &&
+  //       boardToCheck[a] === boardToCheck[b] &&
+  //       boardToCheck[a] === boardToCheck[c]
+  //     ) {
+  //       alert(`${boardToCheck[a]} wins!`)
+  //       resetGame()
+  //       return
+  //     }
+  //   }
 
-    if (!boardToCheck.includes(null)) {
-      alert('Ничья!')
-      resetGame()
-    }
-  }
+  //   if (!boardToCheck.includes(null)) {
+  //     alert('Ничья!')
+  //     resetGame()
+  //   }
+  // }
 
   const resetGame = () => {
     setBoard(initialBoard)
@@ -120,19 +129,30 @@ const App = () => {
     setIsMyTurn(false)
   }
 
+  const handleChangeName = (event: ChangeEvent<HTMLInputElement>) => {
+    setInputNameValue(event.target.value)
+  }
+
   const handleSubmitName = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    const formData = new FormData(event.currentTarget)
-    const name = formData.get('player-name') as string
-
-    console.log(name)
-
-    socket.emit('player:name', { name })
+    socket.emit('player:name', inputNameValue)
+    setInputNameValue('')
   }
 
   return (
-    <div className="text-center mt-5">
-      {room ? <GameRoom /> : <Lobby handleSubmitName={handleSubmitName} />}
+    <div className="flex justify-center text-center mt-5">
+      {room ? (
+        <GameRoom />
+      ) : (
+        <Lobby
+          inputNameValue={inputNameValue}
+          playerID={playerID}
+          playerName={playerName}
+          playerList={playerList}
+          handleChangeName={handleChangeName}
+          handleSubmitName={handleSubmitName}
+        />
+      )}
       {/* {!room ? (
         <div>
           <h2 className="">Лобби</h2>

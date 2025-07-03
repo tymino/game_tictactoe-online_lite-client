@@ -1,36 +1,63 @@
-import React, { useState } from 'react'
-import type { ChangeEvent, FormEvent } from 'react'
+import React from 'react'
 
 import Button from '../components/Button'
 
 interface ILobbyProps {
-  handleSubmitName: (event: FormEvent<HTMLFormElement>) => void
+  inputNameValue: string
+  playerID: string
+  playerName: string
+  playerList: {
+    [key: string]: { name: string }
+  }
+  handleChangeName: (event: React.ChangeEvent<HTMLInputElement>) => void
+  handleSubmitName: (event: React.FormEvent<HTMLFormElement>) => void
 }
 
-const Lobby: React.FC<ILobbyProps> = ({ handleSubmitName }) => {
-  const [name, setName] = useState<string>('')
-
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setName(event.target.value)
-  }
-
+const Lobby: React.FC<ILobbyProps> = ({
+  inputNameValue,
+  playerID,
+  playerName,
+  playerList,
+  handleChangeName,
+  handleSubmitName,
+}) => {
   return (
-    <div>
+    <div className="flex flex-col">
       <h1>Game Lobby</h1>
 
-      <form onSubmit={handleSubmitName}>
+      <p>Your name: {playerName}</p>
+
+      <form
+        onSubmit={handleSubmitName}
+        className="w-[400px] flex flex-col mb-5"
+      >
         <input
+          className="box-content border border-gray-300 rounded-md px-2 py-1 mb-4 mr-1"
           type="text"
-          value={name}
           name="player-name"
-          onChange={handleChange}
-          placeholder="enter name..."
+          autoComplete="off"
+          placeholder="enter new name..."
+          value={inputNameValue}
+          onChange={handleChangeName}
         />
-        <Button type="submit">Go</Button>
+        <Button type="submit">Change name</Button>
       </form>
 
-      <ul>
-        <li></li>
+      <Button type="button" variant="secondary">
+        Ready
+      </Button>
+
+      <ul className="h-[340px] overflow-auto mt-4 border border-gray-300 pt-4">
+        {Object.keys(playerList).map((key) => {
+          const playerColor =
+            playerID === key ? 'text-green-600' : 'text-yellow-700'
+
+          return (
+            <li key={key} className={`${playerColor}`}>
+              {playerList[key].name}
+            </li>
+          )
+        })}
       </ul>
     </div>
   )
