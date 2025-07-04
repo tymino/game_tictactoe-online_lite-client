@@ -11,6 +11,7 @@ interface ILobbyProps {
   }
   handleChangeName: (event: React.ChangeEvent<HTMLInputElement>) => void
   handleSubmitName: (event: React.FormEvent<HTMLFormElement>) => void
+  handleClickReady: () => void
 }
 
 const Lobby: React.FC<ILobbyProps> = ({
@@ -20,6 +21,7 @@ const Lobby: React.FC<ILobbyProps> = ({
   playerList,
   handleChangeName,
   handleSubmitName,
+  handleClickReady,
 }) => {
   return (
     <div className="flex flex-col">
@@ -43,7 +45,7 @@ const Lobby: React.FC<ILobbyProps> = ({
         <Button type="submit">Change name</Button>
       </form>
 
-      <Button type="button" variant="secondary">
+      <Button type="button" variant="secondary" onClick={handleClickReady}>
         Ready
       </Button>
 

@@ -139,6 +139,12 @@ const App = () => {
     setInputNameValue('')
   }
 
+  const handleClickReady = () => {
+    console.log('click ready')
+
+    socket.emit('player:ready')
+  }
+
   return (
     <div className="flex justify-center text-center mt-5">
       {room ? (
@@ -151,6 +157,7 @@ const App = () => {
           playerList={playerList}
           handleChangeName={handleChangeName}
           handleSubmitName={handleSubmitName}
+          handleClickReady={handleClickReady}
         />
       )}
       {/* {!room ? (
