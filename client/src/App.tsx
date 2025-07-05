@@ -23,7 +23,19 @@ const symbols: ISymbol = {
   o: 'O',
 }
 
-const initialBoard: (null | string)[] = Array(9).fill(null)
+interface IPlayer {
+  socketID: string
+  name: string
+  score: number
+}
+
+interface IGameState {
+  room: string
+  player0: IPlayer
+  player1: IPlayer
+  turn: number
+  board: string[]
+}
 
 const App = () => {
   const [inputNameValue, setInputNameValue] = useState<string>('')
@@ -31,33 +43,25 @@ const App = () => {
   const [playerName, setPlayerName] = useState<string>('')
   const [playerList, setPlayerList] = useState({})
 
-  const [room, setRoom] = useState<string | null>(null)
-  const [playerSymbol, setPlayerSymbol] = useState<TSymbol>(null)
-
-  const [board, setBoard] = useState<(null | string)[]>(initialBoard)
-  const [isMyTurn, setIsMyTurn] = useState<boolean>(false)
-  const [gameStarted, setGameStarted] = useState<boolean>(false)
-  const [waiting, setWaiting] = useState<boolean>(true)
+  const [game, setGame] = useState<IGameState | null>(null)
 
   useEffect(() => {
     socket.on('lobby:update', (players) => {
+      console.log('lobby:update', socket.id)
+
       if (socket.id) {
-        setPlayerName(players[socket.id].name)
+        if (!playerName) {
+          setPlayerName(players[socket.id].name)
+        }
+
         setPlayerID(socket.id)
         setPlayerList(players)
       }
     })
 
-    socket.on('startGame', ({ room }: { room: string }) => {
-      // console.log(room)
-      // console.log('socket')
-
-      // setRoom(room)
-      setGameStarted(true)
-      // Первый игрок становится X
-      setPlayerSymbol(symbols.x)
-      setIsMyTurn(true)
-      setWaiting(false)
+    socket.on('game:start', (gameState: IGameState) => {
+      console.log(gameState.room)
+      setGame(gameState)
     })
 
     socket.on('move', (index: number) => {
@@ -71,11 +75,6 @@ const App = () => {
       socket.off('move')
     }
   })
-
-  // const handleJoin = () => {
-  //   // Соединение уже установлено
-  //   setWaiting(false)
-  // }
 
   // const makeMove = (index: number, isMyMove: boolean = true) => {
   //   if (board[index] || (!isMyMove && !isMyTurn)) return
@@ -121,13 +120,13 @@ const App = () => {
   //   }
   // }
 
-  const resetGame = () => {
-    setBoard(initialBoard)
-    setGameStarted(false)
-    setWaiting(true)
-    setPlayerSymbol(null)
-    setIsMyTurn(false)
-  }
+  // const resetGame = () => {
+  //   setBoard(initialBoard)
+  //   setGameStarted(false)
+  //   setWaiting(true)
+  //   setPlayerSymbol(null)
+  //   setIsMyTurn(false)
+  // }
 
   const handleChangeName = (event: ChangeEvent<HTMLInputElement>) => {
     setInputNameValue(event.target.value)
@@ -141,13 +140,12 @@ const App = () => {
 
   const handleClickReady = () => {
     console.log('click ready')
-
     socket.emit('player:ready')
   }
 
   return (
     <div className="flex justify-center text-center mt-5">
-      {room ? (
+      {game ? (
         <GameRoom />
       ) : (
         <Lobby

@@ -25,9 +25,9 @@ const Lobby: React.FC<ILobbyProps> = ({
 }) => {
   return (
     <div className="flex flex-col">
-      <h1>Game Lobby</h1>
+      <h1 className='mb-3 text-3xl'>Game Lobby</h1>
 
-      <p>Your name: {playerName}</p>
+      <p className='mb-1.5'>Your name: {playerName}</p>
 
       <form
         onSubmit={handleSubmitName}

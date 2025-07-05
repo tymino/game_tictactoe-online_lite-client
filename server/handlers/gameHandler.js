@@ -1,3 +1,5 @@
+
+
 export const gameHandler = (io, socket) => {
 
   // if (waitingPlayer) {
@@ -16,11 +18,5 @@ export const gameHandler = (io, socket) => {
   //   console.log('move', socket.rooms)
 
   //   socket.to(room).emit('move', index)
-  // })
-
-  // socket.on('disconnect', () => {
-  //   delete lobbyPlayers[socket.id]
-
-  //   console.log('Disconnected:', socket.id)
   // })
 }
