@@ -4,6 +4,7 @@ import {
   setWaitingPlayer,
   roomConnectKey,
   createGame,
+  updateGame,
 } from '../variables.js'
 
 export const lobbyHandler = (io, socket) => {
@@ -22,34 +23,37 @@ export const lobbyHandler = (io, socket) => {
     }
   })
 
-  socket.on('player:ready', () => {
-    if (waitingPlayer) {
-      // создаем комнату для двух игроков
-      console.log(`Create game for: ${waitingPlayer.id}, ${socket.id}`)
-      const room = `${waitingPlayer.id}${roomConnectKey}${socket.id}`
+  // socket.on('player:ready', () => {
+  if (waitingPlayer) {
+    // создаем комнату для двух игроков
+    console.log(`Create game for: ${waitingPlayer.id}, ${socket.id}`)
+    const room = `${waitingPlayer.id}${roomConnectKey}${socket.id}`
 
-      console.log(`Room name: ${room}`)
+    console.log(`Room name: ${room}`)
 
-      socket.join(room)
-      waitingPlayer.join(room)
+    socket.join(room)
+    waitingPlayer.join(room)
 
-      const gameState = createGame(room, waitingPlayer.id, socket.id)
-      io.to(room).emit('game:start', gameState)
+    socket.room = room
+    waitingPlayer.room = room
 
-      delete lobbyPlayers[socket.id]
-      delete lobbyPlayers[waitingPlayer.id]
-      update()
-      setWaitingPlayer(null)
-    } else {
-      setWaitingPlayer(socket)
-      console.log('waitingPlayer', waitingPlayer.id)
-    }
-  })
+    const gameState = createGame(room, waitingPlayer.id, socket.id)
+    io.to(room).emit('game:start', gameState)
 
-  socket.on('move', ({ index, room }) => {
-    console.log('move', socket.rooms)
+    delete lobbyPlayers[socket.id]
+    delete lobbyPlayers[waitingPlayer.id]
+    update()
+    setWaitingPlayer(null)
+  } else {
+    setWaitingPlayer(socket)
+    console.log('waitingPlayer', waitingPlayer.id)
+  }
+  // })
 
-    socket.to(room).emit('move', index)
+  socket.on('game:move', (index) => {
+    console.log('game:move', socket.room, index)
+    const gameState = updateGame(socket.room, index)
+    io.to(socket.room).emit('game:update', gameState)
   })
 
   socket.on('disconnect', () => {

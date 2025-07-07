@@ -16,7 +16,7 @@ const gameState = {
     score: 0,
   },
   turn: 0,
-  board: Array(9).fill(''),
+  board: Array(9).fill(null),
 }
 
 const setWaitingPlayer = (socket) => {
@@ -24,7 +24,7 @@ const setWaitingPlayer = (socket) => {
 }
 
 const createGame = (room, socketID_1, socketID_2) => {
-  return {
+  const newGame = {
     room,
     player0: {
       socketID: socketID_1,
@@ -37,8 +37,24 @@ const createGame = (room, socketID_1, socketID_2) => {
       score: 0,
     },
     turn: 0,
-    board: Array(9).fill(''),
+    board: Array(9).fill(null),
+    winner: [],
   }
+
+  activeGames[room] = newGame
+
+  return newGame
+}
+
+const updateGame = (room, index) => {
+  activeGames[room] = {
+    ...activeGames[room],
+    board: activeGames[room].board.map((cell, i) =>
+      i === index ? activeGames[room].turn : cell,
+    ),
+    turn: activeGames[room].turn === 0 ? 1 : 0,
+  }
+  return activeGames[room]
 }
 
 export {
@@ -48,4 +64,5 @@ export {
   roomConnectKey,
   activeGames,
   createGame,
+  updateGame,
 }

@@ -2,7 +2,7 @@ import React from 'react'
 
 import Button from '../components/Button'
 
-interface ILobbyProps {
+interface IProps {
   inputNameValue: string
   playerID: string
   playerName: string
@@ -14,7 +14,7 @@ interface ILobbyProps {
   handleClickReady: () => void
 }
 
-const Lobby: React.FC<ILobbyProps> = ({
+const Lobby: React.FC<IProps> = ({
   inputNameValue,
   playerID,
   playerName,
@@ -25,9 +25,9 @@ const Lobby: React.FC<ILobbyProps> = ({
 }) => {
   return (
     <div className="flex flex-col">
-      <h1 className='mb-3 text-3xl'>Game Lobby</h1>
+      <h1 className="mb-3 text-3xl">Game Lobby</h1>
 
-      <p className='mb-1.5'>Your name: {playerName}</p>
+      <p className="mb-1.5">Your name: {playerName}</p>
 
       <form
         onSubmit={handleSubmitName}

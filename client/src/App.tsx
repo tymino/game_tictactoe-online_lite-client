@@ -6,40 +6,24 @@ import Lobby from './pages/Lobby'
 
 const socket: Socket = io('http://localhost:4000')
 
-// type MovePayload = {
-//   index: number
-//   room: string
-// }
-
-type TSymbol = 'X' | 'O' | null
-
-interface ISymbol {
-  x: 'X'
-  o: 'O'
-}
-
-const symbols: ISymbol = {
-  x: 'X',
-  o: 'O',
-}
-
 interface IPlayer {
   socketID: string
   name: string
   score: number
 }
 
-interface IGameState {
+export interface IGameState {
   room: string
   player0: IPlayer
   player1: IPlayer
   turn: number
-  board: string[]
+  board: (number | null)[]
+  winner: number[]
 }
 
 const App = () => {
   const [inputNameValue, setInputNameValue] = useState<string>('')
-  const [playerID, setPlayerID] = useState<string>('')
+  const [socketID, setSocketID] = useState<string>('')
   const [playerName, setPlayerName] = useState<string>('')
   const [playerList, setPlayerList] = useState({})
 
@@ -54,25 +38,27 @@ const App = () => {
           setPlayerName(players[socket.id].name)
         }
 
-        setPlayerID(socket.id)
+        setSocketID(socket.id)
         setPlayerList(players)
       }
     })
 
     socket.on('game:start', (gameState: IGameState) => {
-      console.log(gameState.room)
+      console.log('game:start', gameState.room)
+
       setGame(gameState)
     })
 
-    socket.on('move', (index: number) => {
-      makeMove(index, false)
+    socket.on('game:update', (gameState: IGameState) => {
+      console.log('game:update', gameState.room)
+      setGame(gameState)
     })
 
     // Очистка слушателей при размонтировании компоненты
     return () => {
       socket.off('lobby:update')
-      socket.off('startGame')
-      socket.off('move')
+      socket.off('game:start')
+      socket.off('game:update')
     }
   })
 
@@ -143,14 +129,22 @@ const App = () => {
     socket.emit('player:ready')
   }
 
+  const handleClickMove = (index: number) => {
+    socket.emit('game:move', index)
+  }
+
   return (
     <div className="flex justify-center text-center mt-5">
       {game ? (
-        <GameRoom />
+        <GameRoom
+          socketID={socketID}
+          gameState={game}
+          handleClickMove={handleClickMove}
+        />
       ) : (
         <Lobby
           inputNameValue={inputNameValue}
-          playerID={playerID}
+          playerID={socketID}
           playerName={playerName}
           playerList={playerList}
           handleChangeName={handleChangeName}
