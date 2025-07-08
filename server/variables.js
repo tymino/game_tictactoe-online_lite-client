@@ -17,6 +17,7 @@ const gameState = {
   },
   turn: 0,
   board: Array(9).fill(null),
+  winner: [],
 }
 
 const setWaitingPlayer = (socket) => {

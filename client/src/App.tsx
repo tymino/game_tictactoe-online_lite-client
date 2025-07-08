@@ -1,4 +1,4 @@
-import { useState, useEffect, type FormEvent, type ChangeEvent } from 'react'
+import { useState, useEffect } from 'react'
 import { io, Socket } from 'socket.io-client'
 
 import GameRoom from './pages/GameRoom'
@@ -21,13 +21,31 @@ export interface IGameState {
   winner: number[]
 }
 
+const gameState = {
+  room: 'room-name',
+  player0: {
+    socketID: 'QAWeqeqwe',
+    name: 'Player_1',
+    score: 0,
+  },
+  player1: {
+    socketID: '23rQAWeq234eqwe',
+    name: 'Player_2',
+    score: 0,
+  },
+  turn: 0,
+  board: [0, 1, null, null, 1, null, 0, null, null],
+  winner: [],
+}
+
 const App = () => {
   const [inputNameValue, setInputNameValue] = useState<string>('')
   const [socketID, setSocketID] = useState<string>('')
   const [playerName, setPlayerName] = useState<string>('')
   const [playerList, setPlayerList] = useState({})
 
-  const [game, setGame] = useState<IGameState | null>(null)
+  // const [game, setGame] = useState<IGameState | null>(null)
+  const [game, setGame] = useState<IGameState | null>(gameState)
 
   useEffect(() => {
     socket.on('lobby:update', (players) => {
@@ -114,11 +132,11 @@ const App = () => {
   //   setIsMyTurn(false)
   // }
 
-  const handleChangeName = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputNameValue(event.target.value)
   }
 
-  const handleSubmitName = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmitName = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     socket.emit('player:name', inputNameValue)
     setInputNameValue('')
@@ -134,56 +152,32 @@ const App = () => {
   }
 
   return (
-    <div className="flex justify-center text-center mt-5">
-      {game ? (
-        <GameRoom
-          socketID={socketID}
-          gameState={game}
-          handleClickMove={handleClickMove}
-        />
-      ) : (
-        <Lobby
-          inputNameValue={inputNameValue}
-          playerID={socketID}
-          playerName={playerName}
-          playerList={playerList}
-          handleChangeName={handleChangeName}
-          handleSubmitName={handleSubmitName}
-          handleClickReady={handleClickReady}
-        />
-      )}
-      {/* {!room ? (
-        <div>
-          <h2 className="">Лобби</h2>
-          {waiting ? (
-            <button onClick={handleJoin}>Присоединиться к игре</button>
-          ) : (
-            <p>Ожидание соперника...</p>
-          )}
-        </div>
-      ) : (
-        <div>
-          <h2>Игра: {gameStarted ? `Комната ${room}` : 'Подключено'}</h2>
-          <div className="grid grid-cols-3 gap-[5px] justify-center w-fit mx-auto">
-            {board.map((cell, index) => (
-              <div
-                key={index}
-                onClick={() => gameStarted && isMyTurn && makeMove(index)}
-                className={`w-[60px] h-[60px] leading-[60px] text-2xl border border-black ${
-                  cell || !isMyTurn ? 'cursor-not-allowed' : 'cursor-pointer'
-                } ${cell ? 'bg-gray-100' : 'bg-white'} text-center`}
-              >
-                {cell}
-              </div>
-            ))}
-          </div>
-          {isMyTurn ? <p>Ваш ход ({playerSymbol})</p> : <p>Ожидание хода...</p>}
-          <button onClick={resetGame} className="mt-2.5">
-            Сбросить игру
-          </button>
-        </div>
-      )} */}
+    <div className="flex justify-center h-screen text-center pt-5 bg-[#6AA1F2]">
+      <GameRoom
+        socketID={socketID}
+        gameState={game!}
+        handleClickMove={handleClickMove}
+      />
     </div>
+    // <div className="flex justify-center text-center mt-5">
+    //   {game ? (
+    //     <GameRoom
+    //       socketID={socketID}
+    //       gameState={game}
+    //       handleClickMove={handleClickMove}
+    //     />
+    //   ) : (
+    //     <Lobby
+    //       inputNameValue={inputNameValue}
+    //       playerID={socketID}
+    //       playerName={playerName}
+    //       playerList={playerList}
+    //       handleChangeName={handleChangeName}
+    //       handleSubmitName={handleSubmitName}
+    //       handleClickReady={handleClickReady}
+    //     />
+    //   )}
+    // </div>
   )
 }
 export default App
