@@ -1,1 +1,16 @@
+@font-face {
+  font-family: Chewy;
+  src: url('../src/assets/fonts/Chewy-Regular.ttf');
+}
+
 @import 'tailwindcss';
+
+@theme default {
+  --font-chewy: 'Chewy', sans-serif;
+}
+
+html {
+  font-family: var(--font-chewy);
+  font-weight: 400;
+  font-style: normal;
+}

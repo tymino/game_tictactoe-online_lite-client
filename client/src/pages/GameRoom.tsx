@@ -33,17 +33,17 @@ const GameRoom: React.FC<IProps> = ({
   }
 
   const setStyleShadow = (cell: number | null) => {
-    return `shadow-[-2px_4px_0px_0px] shadow-amber-700 ${
+    return `shadow-[-2px_4px_0px_0px] shadow-[#bb4d00] ${
       cell ?? `active:shadow-[-2px_2px_0px_0px] active:translate-y-0.5`
     }`
   }
 
   return (
     <div>
-      <h1>Game Room</h1>
+      <h1 className="text-4xl">Game Room</h1>
 
       <div>
-        <h2>Комната: {gameState.room}</h2>
+        <div className="font-chewy text-2xl">Room: {gameState.room}</div>
 
         <div className="grid grid-cols-3 gap-2.5 justify-center w-fit p-4 mx-auto bg-[#3299C5] rounded-2xl">
           {gameState.board.map((cell, index) => (
@@ -51,7 +51,7 @@ const GameRoom: React.FC<IProps> = ({
               key={index}
               onClick={handleClick}
               data-index={index}
-              className={`transition w-28 h-28 bg-amber-500 border-4 rounded-2xl border-amber-700 ${setStyleShadow(
+              className={`transition w-28 h-28 bg-[#fd9a00] border-4 rounded-2xl border-[#bb4d00] ${setStyleShadow(
                 cell,
               )} ${setStyleCursor()}`}
             >
@@ -59,7 +59,9 @@ const GameRoom: React.FC<IProps> = ({
             </div>
           ))}
         </div>
-        {isMyTurn ? <p>Ваш ход</p> : <p>Ожидание хода...</p>}
+        <div className="text-2xl font-chewy">
+          {isMyTurn ? <p>your turn</p> : <p>waiting...</p>}
+        </div>
         {/* <button onClick={resetGame} className="mt-2.5">
           Сбросить игру
         </button> */}
