@@ -29,12 +29,12 @@ const createGame = (room, socketID_1, socketID_2) => {
     room,
     player0: {
       socketID: socketID_1,
-      name: lobbyPlayers[socketID_1].name,
+      name: lobbyPlayers[socketID_1].name || 'Player_1',
       score: 0,
     },
     player1: {
       socketID: socketID_2,
-      name: lobbyPlayers[socketID_2].name,
+      name: lobbyPlayers[socketID_2].name || 'Player_2',
       score: 0,
     },
     turn: 0,

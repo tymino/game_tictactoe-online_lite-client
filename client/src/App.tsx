@@ -21,22 +21,22 @@ export interface IGameState {
   winner: number[]
 }
 
-const gameState = {
-  room: 'room-name',
-  player0: {
-    socketID: 'QAWeqeqwe',
-    name: 'Player_1',
-    score: 0,
-  },
-  player1: {
-    socketID: '23rQAWeq234eqwe',
-    name: 'Player_2',
-    score: 0,
-  },
-  turn: 0,
-  board: [0, 1, null, null, 1, null, 0, null, null],
-  winner: [],
-}
+// const gameState = {
+//   room: 'room-name',
+//   player0: {
+//     socketID: 'QAWeqeqwe',
+//     name: 'Player_1',
+//     score: 0,
+//   },
+//   player1: {
+//     socketID: '23rQAWeq234eqwe',
+//     name: 'Player_2',
+//     score: 0,
+//   },
+//   turn: 0,
+//   board: [0, 1, null, null, 1, null, 0, null, null],
+//   winner: [],
+// }
 
 const App = () => {
   const [inputNameValue, setInputNameValue] = useState<string>('')
@@ -44,8 +44,8 @@ const App = () => {
   const [playerName, setPlayerName] = useState<string>('')
   const [playerList, setPlayerList] = useState({})
 
-  // const [game, setGame] = useState<IGameState | null>(null)
-  const [game, setGame] = useState<IGameState | null>(gameState)
+  const [game, setGame] = useState<IGameState | null>(null)
+  // const [game, setGame] = useState<IGameState | null>(gameState)
 
   useEffect(() => {
     socket.on('lobby:update', (players) => {
@@ -152,32 +152,25 @@ const App = () => {
   }
 
   return (
-    <div className="flex justify-center h-screen text-center pt-5 bg-[#6AA1F2]">
-      <GameRoom
-        socketID={socketID}
-        gameState={game!}
-        handleClickMove={handleClickMove}
-      />
+    <div className="flex justify-center text-center mt-5">
+      {game ? (
+        <GameRoom
+          socketID={socketID}
+          gameState={game}
+          handleClickMove={handleClickMove}
+        />
+      ) : (
+        <Lobby
+          inputNameValue={inputNameValue}
+          playerID={socketID}
+          playerName={playerName}
+          playerList={playerList}
+          handleChangeName={handleChangeName}
+          handleSubmitName={handleSubmitName}
+          handleClickReady={handleClickReady}
+        />
+      )}
     </div>
-    // <div className="flex justify-center text-center mt-5">
-    //   {game ? (
-    //     <GameRoom
-    //       socketID={socketID}
-    //       gameState={game}
-    //       handleClickMove={handleClickMove}
-    //     />
-    //   ) : (
-    //     <Lobby
-    //       inputNameValue={inputNameValue}
-    //       playerID={socketID}
-    //       playerName={playerName}
-    //       playerList={playerList}
-    //       handleChangeName={handleChangeName}
-    //       handleSubmitName={handleSubmitName}
-    //       handleClickReady={handleClickReady}
-    //     />
-    //   )}
-    // </div>
   )
 }
 export default App

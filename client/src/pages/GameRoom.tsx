@@ -1,8 +1,10 @@
 import React from 'react'
 
-import { Cross } from '../components/Figures'
-
 import type { IGameState } from '../App'
+
+import { Figures } from '../components/Figures'
+import PlayerInfo from '../components/PlayerInfo'
+import Header from '../components/Header'
 
 interface IProps {
   socketID: string
@@ -29,39 +31,63 @@ const GameRoom: React.FC<IProps> = ({
   }
 
   const setStyleCursor = () => {
-    return !isMyTurn ? 'cursor-pointer' : 'cursor-not-allowed'
+    return isMyTurn ? 'cursor-pointer' : 'cursor-not-allowed'
   }
 
   const setStyleShadow = (cell: number | null) => {
-    return `shadow-[-2px_4px_0px_0px] shadow-[#bb4d00] ${
-      cell ?? `active:shadow-[-2px_2px_0px_0px] active:translate-y-0.5`
+    const isPressed = cell === null && isMyTurn
+
+    return `shadow-[-2px_4px_0px_0px] shadow-cell-border ${
+      isPressed && `active:shadow-[-2px_2px_0px_0px] active:translate-y-0.5`
     }`
   }
 
   return (
     <div>
-      <h1 className="text-4xl">Game Room</h1>
+      <Header>Game Room</Header>
 
-      <div>
-        <div className="font-chewy text-2xl">Room: {gameState.room}</div>
+      <div className="flex flex-col p-4 bg-board-bg rounded-2xl">
+        <div className="flex justify-between mb-2">
+          <PlayerInfo
+            indexForFigure={0}
+            name={gameState.player0.name}
+            score={gameState.player0.score}
+            side="start"
+          />
 
-        <div className="grid grid-cols-3 gap-2.5 justify-center w-fit p-4 mx-auto bg-[#3299C5] rounded-2xl">
+          <div className="text-2xl size-12">
+            <p className="mt-3 mb-1 text-base text-cell-border">turn</p>
+            <Figures cell={gameState.turn} bgColor="bg-accent" />
+          </div>
+
+          <PlayerInfo
+            indexForFigure={1}
+            name={gameState.player1.name}
+            score={gameState.player1.score}
+            side="end"
+            bgColor="board-bg"
+          />
+        </div>
+
+        <div className="grid grid-cols-3 gap-2.5 justify-center w-fit mx-auto">
           {gameState.board.map((cell, index) => (
             <div
               key={index}
               onClick={handleClick}
               data-index={index}
-              className={`transition w-28 h-28 bg-[#fd9a00] border-4 rounded-2xl border-[#bb4d00] ${setStyleShadow(
+              className={`transition w-28 h-28 bg-cell-bg border-4 rounded-2xl border-cell-border ${setStyleShadow(
                 cell,
               )} ${setStyleCursor()}`}
             >
-              <Cross cell={cell} />
+              <Figures cell={cell} />
             </div>
           ))}
         </div>
-        <div className="text-2xl font-chewy">
-          {isMyTurn ? <p>your turn</p> : <p>waiting...</p>}
+
+        <div className="self-end max-w-2/5 mt-2 text-sm text-player-primary overflow-hidden text-nowrap">
+          Room: {gameState.room}
         </div>
+
         {/* <button onClick={resetGame} className="mt-2.5">
           Сбросить игру
         </button> */}
