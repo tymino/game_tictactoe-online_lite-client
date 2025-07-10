@@ -1,6 +1,6 @@
 import React from 'react'
 
-import Button from '../components/Button'
+import { Button } from '../components/Button'
 
 interface IProps {
   inputNameValue: string
@@ -14,7 +14,7 @@ interface IProps {
   handleClickReady: () => void
 }
 
-const Lobby: React.FC<IProps> = ({
+export const Lobby: React.FC<IProps> = ({
   inputNameValue,
   playerID,
   playerName,
@@ -64,5 +64,3 @@ const Lobby: React.FC<IProps> = ({
     </div>
   )
 }
-
-export default Lobby

@@ -4,8 +4,6 @@ interface IProps {
   children: React.ReactNode
 }
 
-const Header: React.FC<IProps> = ({ children }) => {
+export const Header: React.FC<IProps> = ({ children }) => {
   return <h1 className="mb-4 text-4xl text-player-accent">{children}</h1>
 }
-
-export default Header

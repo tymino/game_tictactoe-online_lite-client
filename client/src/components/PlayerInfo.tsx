@@ -6,11 +6,11 @@ interface IProps {
   indexForFigure: number
   name: string
   score: number
-  side: 'start' | 'end'
+  side?: 'start' | 'end'
   bgColor?: string
 }
 
-const PlayerInfo: React.FC<IProps> = ({
+export const PlayerInfo: React.FC<IProps> = ({
   indexForFigure,
   name,
   score,
@@ -18,10 +18,10 @@ const PlayerInfo: React.FC<IProps> = ({
   bgColor,
 }) => {
   return (
-    <div className={`flex max-w-28 flex-col items-${side}`}>
+    <div className={`flex max-w-28 w-full flex-col items-${side} text-${side}`}>
       <div className="text-cell-border">
         <h3>{name}</h3>
-        <p className={`text-${side}`}>Score: {score}</p>
+        <p>Score: {score}</p>
       </div>
 
       <div className="w-10 h-10">
@@ -30,5 +30,3 @@ const PlayerInfo: React.FC<IProps> = ({
     </div>
   )
 }
-
-export default PlayerInfo

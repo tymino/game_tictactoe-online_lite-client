@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { io, Socket } from 'socket.io-client'
 
-import GameRoom from './pages/GameRoom'
-import Lobby from './pages/Lobby'
+import { GameRoom } from './pages/GameRoom'
+import { Lobby } from './pages/Lobby'
 
 const socket: Socket = io('http://localhost:4000')
 
