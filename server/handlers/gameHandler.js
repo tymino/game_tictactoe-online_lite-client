@@ -1,6 +1,11 @@
-
+import { activeGames, updateGame } from '../variables.js'
 
 export const gameHandler = (io, socket) => {
+  socket.on('game:move', (index) => {
+    console.log('game:move', socket.room, index)
+    const gameState = updateGame(socket.room, index)
+    io.to(socket.room).emit('game:update', gameState)
+  })
 
   // if (waitingPlayer) {
   //   // создаем комнату для двух игроков

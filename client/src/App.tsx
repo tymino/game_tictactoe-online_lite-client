@@ -72,6 +72,11 @@ const App = () => {
       setGame(gameState)
     })
 
+    socket.on('game:close', () => {
+      console.log('game:disconect')
+      setGame(null)
+    })
+
     // Очистка слушателей при размонтировании компоненты
     return () => {
       socket.off('lobby:update')

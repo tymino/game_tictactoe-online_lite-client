@@ -21,9 +21,10 @@ export const SectionBoard: React.FC<IProps> = ({
       : socketID === gameState.player1.socketID
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
-    if (isMyTurn) {
-      console.log('click move')
-      const buttonIndex = Number(event.currentTarget.dataset.index)
+    const buttonIndex = Number(event.currentTarget.dataset.index)
+
+    if (gameState.board[buttonIndex] === null && isMyTurn) {
+      console.log('click move', buttonIndex)
       handleClickMove(buttonIndex)
     }
   }

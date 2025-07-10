@@ -50,11 +50,6 @@ export const lobbyHandler = (io, socket) => {
   }
   // })
 
-  socket.on('game:move', (index) => {
-    console.log('game:move', socket.room, index)
-    const gameState = updateGame(socket.room, index)
-    io.to(socket.room).emit('game:update', gameState)
-  })
 
   socket.on('disconnect', () => {
     console.log('Disconnected: lobby ', socket.id)
