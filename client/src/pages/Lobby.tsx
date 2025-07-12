@@ -1,6 +1,7 @@
 import React from 'react'
 
 import { Button } from '../components/Button'
+import { Header } from '../components/Header'
 
 interface IProps {
   inputNameValue: string
@@ -25,24 +26,31 @@ export const Lobby: React.FC<IProps> = ({
 }) => {
   return (
     <div className="flex flex-col">
-      <h1 className="mb-3 text-3xl">Game Lobby</h1>
-
-      <p className="mb-1.5">Your name: {playerName}</p>
+      <Header>Game Lobby</Header>
 
       <form
+        className="flex flex-col items-center w-[400px]"
         onSubmit={handleSubmitName}
-        className="w-[400px] flex flex-col mb-5"
       >
-        <input
-          className="box-content border border-gray-300 rounded-md px-2 py-1 mb-4 mr-1"
-          type="text"
-          name="player-name"
-          autoComplete="off"
-          placeholder="enter new name..."
-          value={inputNameValue}
-          onChange={handleChangeName}
-        />
-        <Button type="submit">Change name</Button>
+        <div className="flex items-center w-full mb-2.5">
+          <label className="capitalize" htmlFor="player-name">
+            name: {playerName}
+          </label>
+          <input
+            id="player-name"
+            className="grow px-2 py-1 mx-2 box-content border border-gray-300 rounded-md"
+            type="text"
+            name="player-name"
+            autoComplete="off"
+            placeholder="enter new name..."
+            value={inputNameValue}
+            onChange={handleChangeName}
+          />
+
+          <Button type="submit" className="">
+            Change name
+          </Button>
+        </div>
       </form>
 
       <Button type="button" variant="secondary" onClick={handleClickReady}>
