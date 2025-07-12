@@ -50,9 +50,12 @@ export const lobbyHandler = (io, socket) => {
   }
   // })
 
-
   socket.on('disconnect', () => {
     console.log('Disconnected: lobby ', socket.id)
+
+    if (waitingPlayer && waitingPlayer.id === socket.id) {
+      setWaitingPlayer(null)
+    }
 
     delete lobbyPlayers[socket.id]
     update()

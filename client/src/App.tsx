@@ -52,9 +52,7 @@ const App = () => {
       console.log('lobby:update', socket.id)
 
       if (socket.id) {
-        if (!playerName) {
-          setPlayerName(players[socket.id].name)
-        }
+        setPlayerName(players[socket.id].name)
 
         setSocketID(socket.id)
         setPlayerList(players)

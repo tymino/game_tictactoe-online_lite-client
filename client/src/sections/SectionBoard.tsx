@@ -2,7 +2,7 @@ import React from 'react'
 
 import type { IGameState } from '../App'
 
-import { Figures } from './Figures'
+import { Figures } from '../components/Figures'
 
 interface IProps {
   socketID: string

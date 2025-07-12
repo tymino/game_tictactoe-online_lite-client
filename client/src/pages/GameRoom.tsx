@@ -3,9 +3,10 @@ import React from 'react'
 import type { IGameState } from '../App'
 
 import { Header } from '../components/Header'
-import { SectionInfo } from '../components/SectionInfo'
-import { SectionBoard } from '../components/SectionBoard'
-import { SectionFooter } from '../components/SectionFooter'
+
+import { SectionInfo } from '../sections/SectionInfo'
+import { SectionBoard } from '../sections/SectionBoard'
+import { SectionFooter } from '../sections/SectionFooter'
 
 interface IProps {
   socketID: string

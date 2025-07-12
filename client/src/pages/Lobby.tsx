@@ -29,16 +29,16 @@ export const Lobby: React.FC<IProps> = ({
       <Header>Game Lobby</Header>
 
       <form
-        className="flex flex-col items-center w-[400px]"
+        className="flex flex-col w-[320px] mb-4"
         onSubmit={handleSubmitName}
       >
-        <div className="flex items-center w-full mb-2.5">
-          <label className="capitalize" htmlFor="player-name">
+        <div className="flex flex-col w-full ">
+          <label className="mb-1 capitalize" htmlFor="player-name">
             name: {playerName}
           </label>
           <input
             id="player-name"
-            className="grow px-2 py-1 mx-2 box-content border border-gray-300 rounded-md"
+            className="grow px-2 py-1 mb-1 box-content border border-gray-300 rounded-md"
             type="text"
             name="player-name"
             autoComplete="off"
@@ -46,18 +46,18 @@ export const Lobby: React.FC<IProps> = ({
             value={inputNameValue}
             onChange={handleChangeName}
           />
-
-          <Button type="submit" className="">
-            Change name
-          </Button>
         </div>
+
+        <Button type="submit" className="">
+          Change name
+        </Button>
       </form>
 
       <Button type="button" variant="secondary" onClick={handleClickReady}>
         Ready
       </Button>
 
-      <ul className="h-[340px] overflow-auto mt-4 border border-gray-300 pt-4">
+      <ul className="h-[340px] overflow-auto mt-2 border border-gray-300 pt-4">
         {Object.keys(playerList).map((key) => {
           const playerColor =
             playerID === key ? 'text-green-600' : 'text-yellow-700'

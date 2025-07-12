@@ -2,8 +2,8 @@ import React from 'react'
 
 import type { IGameState } from '../App'
 
-import { PlayerInfo } from './PlayerInfo'
-import { Figures } from './Figures'
+import { PlayerInfo } from '../components/PlayerInfo'
+import { Figures } from '../components/Figures'
 
 interface IProps {
   socketID: string
