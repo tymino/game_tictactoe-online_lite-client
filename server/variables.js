@@ -1,3 +1,4 @@
+export const connectedPlayers = {}
 const lobbyPlayers = {}
 let waitingPlayer = null
 const roomConnectKey = '_:room:_'

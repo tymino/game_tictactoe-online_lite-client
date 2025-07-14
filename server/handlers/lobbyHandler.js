@@ -1,19 +1,28 @@
 import {
+  connectedPlayers,
   lobbyPlayers,
   waitingPlayer,
   setWaitingPlayer,
   roomConnectKey,
   createGame,
-  updateGame,
 } from '../variables.js'
+
+const createPlayer = (socketID) => {
+  const player = {
+    name: `Player_${socketID.slice(3, 9)}`,
+  }
+
+  return player
+}
 
 export const lobbyHandler = (io, socket) => {
   const update = () => {
-    console.log('lobbyPlayers', lobbyPlayers)
+    console.log('lobbyPlayers: ', lobbyPlayers)
     io.emit('lobby:update', lobbyPlayers)
   }
 
-  lobbyPlayers[socket.id] = { name: `Player_${socket.id.slice(3, 9)}` }
+  connectedPlayers[socket.id] = createPlayer(socket.id)
+  lobbyPlayers[socket.id] = connectedPlayers[socket.id]
   update()
 
   socket.on('player:name', (name) => {
@@ -42,8 +51,8 @@ export const lobbyHandler = (io, socket) => {
 
     delete lobbyPlayers[socket.id]
     delete lobbyPlayers[waitingPlayer.id]
-    update()
     setWaitingPlayer(null)
+    update()
   } else {
     setWaitingPlayer(socket)
     console.log('waitingPlayer', waitingPlayer.id)
@@ -51,12 +60,13 @@ export const lobbyHandler = (io, socket) => {
   // })
 
   socket.on('disconnect', () => {
-    console.log('Disconnected: lobby ', socket.id)
+    console.log('Disconnected lobby: ', socket.id)
 
     if (waitingPlayer && waitingPlayer.id === socket.id) {
       setWaitingPlayer(null)
     }
 
+    delete connectedPlayers[socket.id]
     delete lobbyPlayers[socket.id]
     update()
   })
