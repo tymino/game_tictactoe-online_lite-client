@@ -15,7 +15,7 @@ const createPlayer = (socketID) => {
   return player
 }
 
-export const lobbyHandler = (io, socket) => {
+export const handlerLobby = (io, socket) => {
   const update = () => {
     console.log('lobbyPlayers: ', lobbyPlayers)
     io.emit('lobby:update', lobbyPlayers)

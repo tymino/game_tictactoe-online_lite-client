@@ -1,6 +1,6 @@
 import { activeGames, updateGame } from '../variables.js'
 
-export const gameHandler = (io, socket) => {
+export const handlerGame = (io, socket) => {
   socket.on('game:move', (index) => {
     console.log('game:move', socket.room, index)
     const gameState = updateGame(socket.room, index)
