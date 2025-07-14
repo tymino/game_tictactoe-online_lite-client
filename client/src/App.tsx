@@ -18,7 +18,7 @@ export interface IGameState {
   player1: IPlayer
   turn: number
   board: (number | null)[]
-  winner: number[]
+  winner: number[] | null
 }
 
 // const gameState = {
@@ -42,6 +42,7 @@ const App = () => {
   const [inputNameValue, setInputNameValue] = useState<string>('')
   const [socketID, setSocketID] = useState<string>('')
   const [playerName, setPlayerName] = useState<string>('')
+  const [isReady, setIsReady] = useState<boolean>(false)
   const [playerList, setPlayerList] = useState({})
 
   const [game, setGame] = useState<IGameState | null>(null)
@@ -147,7 +148,11 @@ const App = () => {
 
   const handleClickReady = () => {
     console.log('click ready')
-    socket.emit('player:ready')
+
+    socket.emit('player:ready', () => {
+      // console.log('player is ready')
+      setIsReady(true)
+    })
   }
 
   const handleClickMove = (index: number) => {
@@ -167,6 +172,7 @@ const App = () => {
           inputNameValue={inputNameValue}
           playerID={socketID}
           playerName={playerName}
+          isReady={isReady}
           playerList={playerList}
           handleChangeName={handleChangeName}
           handleSubmitName={handleSubmitName}

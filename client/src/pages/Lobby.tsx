@@ -2,11 +2,13 @@ import React from 'react'
 
 import { Button } from '../components/Button'
 import { Header } from '../components/Header'
+import { SectionChangeName } from '../sections/SectionChangeName'
 
 interface IProps {
   inputNameValue: string
   playerID: string
   playerName: string
+  isReady: boolean
   playerList: {
     [key: string]: { name: string }
   }
@@ -19,6 +21,7 @@ export const Lobby: React.FC<IProps> = ({
   inputNameValue,
   playerID,
   playerName,
+  isReady,
   playerList,
   handleChangeName,
   handleSubmitName,
@@ -28,47 +31,41 @@ export const Lobby: React.FC<IProps> = ({
     <div className="flex flex-col">
       <Header>Game Lobby</Header>
 
-      <form
-        className="flex flex-col w-[320px] mb-4"
-        onSubmit={handleSubmitName}
-      >
-        <div className="flex flex-col w-full ">
-          <label className="mb-1 capitalize" htmlFor="player-name">
-            name: {playerName}
-          </label>
-          <input
-            id="player-name"
-            className="grow px-2 py-1 mb-1 box-content border border-gray-300 rounded-md"
-            type="text"
-            name="player-name"
-            autoComplete="off"
-            placeholder="enter new name..."
-            value={inputNameValue}
-            onChange={handleChangeName}
-          />
-        </div>
+      <SectionChangeName
+        playerName={playerName}
+        inputNameValue={inputNameValue}
+        handleChangeName={handleChangeName}
+        handleSubmitName={handleSubmitName}
+      />
 
-        <Button type="submit" className="">
-          Change name
+      <div className="px-4 pb-4 bg-board-bg rounded-bl-2xl rounded-br-2xl">
+        <Button type="button" variant="primary" onClick={handleClickReady}>
+          {isReady ? 'Ready' : 'Not ready'}
         </Button>
-      </form>
 
-      <Button type="button" variant="secondary" onClick={handleClickReady}>
-        Ready
-      </Button>
+        <ul
+          className="h-[340px] overflow-auto mt-2 border border-player-accent rounded-md"
+          style={{
+            scrollbarColor: '#a111aa #7faaeb',
+            scrollbarWidth: 'thin',
+            scrollbarGutter: 'stable',
+          }}
+        >
+          {Object.keys(playerList).map((key) => {
+            const playerColor =
+              playerID === key ? 'text-cell-border' : 'text-player-accent'
 
-      <ul className="h-[340px] overflow-auto mt-2 border border-gray-300 pt-4">
-        {Object.keys(playerList).map((key) => {
-          const playerColor =
-            playerID === key ? 'text-green-600' : 'text-yellow-700'
-
-          return (
-            <li key={key} className={`${playerColor}`}>
-              {playerList[key].name}
-            </li>
-          )
-        })}
-      </ul>
+            return (
+              <li
+                key={key}
+                className={`${playerColor} py-2 mx-2 border-b border-player-accent`}
+              >
+                {playerList[key].name}
+              </li>
+            )
+          })}
+        </ul>
+      </div>
     </div>
   )
 }

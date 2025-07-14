@@ -1,36 +1,36 @@
 import React from 'react'
 
 interface ButtonProps {
-  variant?: 'primary' | 'secondary'
   children: React.ReactNode
   onClick?: () => void
+  variant?: 'primary' | 'secondary'
+  type?: 'button' | 'submit' | 'reset'
   disabled?: boolean
   className?: string
-  type?: 'button' | 'submit' | 'reset'
 }
 
 export const Button: React.FC<ButtonProps> = ({
-  variant = 'primary',
   children,
   onClick,
+  variant = 'primary',
+  type = 'button',
   disabled = false,
   className = '',
-  type = 'button',
 }) => {
   const baseStyles =
-    'px-3 py-1 rounded-md font-medium transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2'
+    'w-full px-3 py-1 rounded-md font-medium transition-colors duration-200 ease-in-out cursor-pointer active:translate-y-0.5 disabled:cursor-default disabled:opacity-50'
 
   const variants = {
     primary:
-      'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 disabled:bg-blue-300',
+      'bg-player-accent text-board-bg hover:grayscale-25 disabled:grayscale-0',
     secondary:
-      'bg-gray-200 text-gray-700 hover:bg-gray-300 focus:ring-gray-500 disabled:bg-gray-100',
+      'text-player-accent border border-player-accent hover:border-cell-bg hover:text-cell-bg disabled:text-player-accent disabled:border-player-accent',
   }
 
   return (
     <button
       type={type}
-      className={`${baseStyles} ${variants[variant]} ${className}`}
+      className={`${baseStyles} ${variants[variant]} ${className} `}
       onClick={onClick}
       disabled={disabled}
     >
