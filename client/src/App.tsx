@@ -149,9 +149,9 @@ const App = () => {
   const handleClickReady = () => {
     console.log('click ready')
 
-    socket.emit('player:ready', () => {
-      // console.log('player is ready')
-      setIsReady(true)
+    socket.emit('player:ready', (value: boolean) => {
+      // console.log('player is ready:', value)
+      setIsReady(value)
     })
   }
 
