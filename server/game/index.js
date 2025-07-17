@@ -57,6 +57,8 @@ export const createGame = (room, socketID_1, socketID_2) => {
   }
 
   activeGames[room] = newGame
+
+  return newGame
 }
 
 export const updateGame = (room, index) => {

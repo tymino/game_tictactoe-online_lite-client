@@ -34,8 +34,8 @@ export const handlerLobby = (io, socket) => {
     socket.room = room
     waitingPlayer.room = room
 
-    createGame(room, waitingPlayer.id, socket.id)
-    io.to(room).emit('game:start', activeGames[room])
+    const newGame = createGame(room, waitingPlayer.id, socket.id)
+    io.to(room).emit('game:start', newGame)
 
     delete lobbyPlayers[socket.id]
     delete lobbyPlayers[waitingPlayer.id]

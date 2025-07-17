@@ -62,7 +62,6 @@ const App = () => {
 
     socket.on('game:start', (gameState: IGameState) => {
       console.log('game:start', gameState.room)
-
       setGame(gameState)
     })
 

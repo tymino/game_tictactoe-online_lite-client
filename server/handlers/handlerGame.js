@@ -1,4 +1,4 @@
-import { activeGames, updateGame } from '../game/index.js'
+import { activeGames, createGame, updateGame } from '../game/index.js'
 
 export const handlerGame = (io, socket) => {
   const sendGameState = () => {
