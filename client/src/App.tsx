@@ -18,7 +18,7 @@ export interface IGameState {
   player1: IPlayer
   turn: number
   board: (number | null)[]
-  winner: number[] | null
+  winner: -1 | 0 | 1 | null
 }
 
 // const gameState = {
@@ -83,50 +83,6 @@ const App = () => {
       socket.off('game:update')
     }
   })
-
-  // const makeMove = (index: number, isMyMove: boolean = true) => {
-  //   if (board[index] || (!isMyMove && !isMyTurn)) return
-
-  //   const newBoard = [...board] as (null | string)[]
-  //   newBoard[index] = playerSymbol!
-  //   setBoard(newBoard)
-
-  //   if (isMyMove) {
-  //     socket.emit('move', { index, room: room! })
-  //     setIsMyTurn(false)
-  //   }
-  //   checkWinner(newBoard)
-  // }
-
-  // const checkWinner = (boardToCheck: (null | string)[]) => {
-  //   const lines = [
-  //     [0, 1, 2],
-  //     [3, 4, 5],
-  //     [6, 7, 8],
-  //     [0, 3, 6],
-  //     [1, 4, 7],
-  //     [2, 5, 8],
-  //     [0, 4, 8],
-  //     [2, 4, 6],
-  //   ]
-
-  //   for (const [a, b, c] of lines) {
-  //     if (
-  //       boardToCheck[a] &&
-  //       boardToCheck[a] === boardToCheck[b] &&
-  //       boardToCheck[a] === boardToCheck[c]
-  //     ) {
-  //       alert(`${boardToCheck[a]} wins!`)
-  //       resetGame()
-  //       return
-  //     }
-  //   }
-
-  //   if (!boardToCheck.includes(null)) {
-  //     alert('Ничья!')
-  //     resetGame()
-  //   }
-  // }
 
   // const resetGame = () => {
   //   setBoard(initialBoard)

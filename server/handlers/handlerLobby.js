@@ -4,21 +4,19 @@ import {
   waitingPlayer,
   setWaitingPlayer,
   roomConnectKey,
-  createGame,
-} from '../variables.js'
+} from '../lobby/index.js'
+import { activeGames, createGame } from '../game/index.js'
 
 const createPlayer = (socketID) => {
   const player = {
     name: `Player_${socketID.slice(3, 9)}`,
   }
-
   // console.log('create player', player.name)
-
   return player
 }
 
 export const handlerLobby = (io, socket) => {
-  const update = () => {
+  const sendLobbyState = () => {
     console.log('lobbyPlayers: ', lobbyPlayers)
     io.emit('lobby:update', lobbyPlayers)
   }
@@ -36,40 +34,40 @@ export const handlerLobby = (io, socket) => {
     socket.room = room
     waitingPlayer.room = room
 
-    const gameState = createGame(room, waitingPlayer.id, socket.id)
-    io.to(room).emit('game:start', gameState)
+    createGame(room, waitingPlayer.id, socket.id)
+    io.to(room).emit('game:start', activeGames[room])
 
     delete lobbyPlayers[socket.id]
     delete lobbyPlayers[waitingPlayer.id]
     setWaitingPlayer(null)
-    update()
+    sendLobbyState()
   }
 
   connectedPlayers[socket.id] = createPlayer(socket.id)
   lobbyPlayers[socket.id] = connectedPlayers[socket.id]
-  update()
+  sendLobbyState()
 
   socket.on('player:name', (name) => {
     if (name.length > 0) {
       lobbyPlayers[socket.id].name = name
-      update()
+      sendLobbyState()
     }
   })
 
-  socket.on('player:ready', (response) => {
-    if (waitingPlayer) {
-      if (waitingPlayer.id === socket.id) {
-        setWaitingPlayer(null)
-        response(false)
-      } else {
-        createGameRoom()
-      }
+  // socket.on('player:ready', (response) => {
+  if (waitingPlayer) {
+    if (waitingPlayer.id === socket.id) {
+      setWaitingPlayer(null)
+      // response(false)
     } else {
-      setWaitingPlayer(socket)
-      console.log('waitingPlayer', waitingPlayer.id)
-      response(true)
+      createGameRoom()
     }
-  })
+  } else {
+    setWaitingPlayer(socket)
+    console.log('waitingPlayer', waitingPlayer.id)
+    // response(true)
+  }
+  // })
 
   socket.on('disconnect', () => {
     console.log('Disconnected lobby: ', socket.id)
@@ -80,6 +78,6 @@ export const handlerLobby = (io, socket) => {
 
     delete connectedPlayers[socket.id]
     delete lobbyPlayers[socket.id]
-    update()
+    sendLobbyState()
   })
 }
