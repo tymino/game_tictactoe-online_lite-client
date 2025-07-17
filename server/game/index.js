@@ -2,11 +2,14 @@ import { lobbyPlayers } from '../lobby/index.js'
 
 export const activeGames = {}
 
-const changeTurn = (room) => {
-  activeGames[room].turn = activeGames[room].turn === 0 ? 1 : 0
+const toggleTurn = (room) => {
+  const game = activeGames[room]
+  if (game.winner === null) {
+    game.turn = game.turn === 0 ? 1 : 0
+  }
 }
 
-const checkGameWinner = (room) => {
+const checkWinningLines = (board) => {
   const lines = [
     [0, 1, 2],
     [3, 4, 5],
@@ -19,18 +22,26 @@ const checkGameWinner = (room) => {
   ]
 
   for (const [a, b, c] of lines) {
-    const board = activeGames[room].board
-
     const isLineComplete =
       board[a] !== null && board[a] === board[b] && board[a] === board[c]
 
     if (isLineComplete) {
       console.log('line complete')
-      return activeGames[room].turn
+      return true
     }
   }
 
-  if (!activeGames[room].board.includes(null)) {
+  return false
+}
+
+const checkGameWinner = (room) => {
+  const { board } = activeGames[room]
+
+  if (checkWinningLines(board)) {
+    return activeGames[room].turn
+  }
+
+  if (!board.includes(null)) {
     console.log('cells complete')
     return -1
   }
@@ -38,19 +49,17 @@ const checkGameWinner = (room) => {
   return null
 }
 
+const createPlayer = (socketID, playerNumber) => ({
+  socketID,
+  name: lobbyPlayers[socketID].name || `Player_${playerNumber}`,
+  score: 0,
+})
+
 export const createGame = (room, socketID_1, socketID_2) => {
   const newGame = {
     room,
-    player0: {
-      socketID: socketID_1,
-      name: lobbyPlayers[socketID_1].name || 'Player_1',
-      score: 0,
-    },
-    player1: {
-      socketID: socketID_2,
-      name: lobbyPlayers[socketID_2].name || 'Player_2',
-      score: 0,
-    },
+    player0: createPlayer(socketID_1, 1),
+    player1: createPlayer(socketID_2, 2),
     turn: 0,
     board: Array(9).fill(null),
     winner: null,
@@ -62,22 +71,15 @@ export const createGame = (room, socketID_1, socketID_2) => {
 }
 
 export const updateGame = (room, index) => {
-  if (activeGames[room].board[index] !== null) {
-    return activeGames[room]
+  const game = activeGames[room]
+  
+  if (game.board[index] !== null) {
+    return game
   }
 
-  activeGames[room] = {
-    ...activeGames[room],
-    board: activeGames[room].board.map((cell, i) =>
-      i === index ? activeGames[room].turn : cell,
-    ),
-  }
-
-  const winner = checkGameWinner(room)
-
-  activeGames[room].winner = winner
-
-  if (!winner) {
-    changeTurn(room)
-  }
+  game.board[index] = game.turn
+  game.winner = checkGameWinner(room)
+  toggleTurn(room)
+  
+  return game
 }
