@@ -3,6 +3,7 @@ import React from 'react'
 import type { IGameState } from '../App'
 
 import { Header } from '../components/Header'
+import { Modal } from '../components/Modal'
 
 import { SectionInfo } from '../sections/SectionInfo'
 import { SectionBoard } from '../sections/SectionBoard'
@@ -20,7 +21,7 @@ export const GameRoom: React.FC<IProps> = ({
   handleClickMove,
 }) => {
   return (
-    <div>
+    <div className="relative">
       <Header>Game Room</Header>
 
       <div className="flex flex-col p-4 bg-board-bg rounded-2xl">
@@ -37,6 +38,13 @@ export const GameRoom: React.FC<IProps> = ({
         {/* <button onClick={resetGame} className="mt-2.5">
           Сбросить игру
         </button> */}
+
+        {gameState.winner !== null && (
+          <Modal
+            isFirstPlayer={socketID === gameState.player0.socketID}
+            winner={gameState.winner}
+          />
+        )}
       </div>
     </div>
   )
