@@ -21,22 +21,22 @@ export interface IGameState {
   winner: -1 | 0 | 1 | null
 }
 
-const gameState = {
-  room: 'room-name',
-  player0: {
-    socketID: 'QAWeqeqwe',
-    name: 'Player_1',
-    score: 0,
-  },
-  player1: {
-    socketID: '23rQAWeq234eqwe',
-    name: 'Player_2',
-    score: 0,
-  },
-  turn: 0,
-  board: [0, 1, null, null, 1, null, 0, null, null],
-  winner: null,
-}
+// const gameState = {
+//   room: 'room-name',
+//   player0: {
+//     socketID: 'QAWeqeqwe',
+//     name: 'Player_1',
+//     score: 0,
+//   },
+//   player1: {
+//     socketID: '23rQAWeq234eqwe',
+//     name: 'Player_2',
+//     score: 0,
+//   },
+//   turn: 0,
+//   board: [0, 1, null, null, 1, null, 0, null, null],
+//   winner: null,
+// }
 
 const App = () => {
   const [inputNameValue, setInputNameValue] = useState<string>('')
@@ -45,15 +45,15 @@ const App = () => {
   const [isReady, setIsReady] = useState<boolean>(false)
   const [playerList, setPlayerList] = useState({})
 
-  // const [game, setGame] = useState<IGameState | null>(null)
-  const [game, setGame] = useState<IGameState | null>(gameState)
+  const [game, setGame] = useState<IGameState | null>(null)
+  // const [game, setGame] = useState<IGameState | null>(gameState)
 
   useEffect(() => {
     socket.on('lobby:update', (players) => {
       console.log('lobby:update', socket.id)
 
       if (socket.id) {
-        setPlayerName(players[socket.id].name)
+        setPlayerName(players[socket.id]?.name)
 
         setSocketID(socket.id)
         setPlayerList(players)

@@ -20,7 +20,6 @@ export const SectionInfo: React.FC<IProps> = ({ socketID, gameState }) => {
       <PlayerInfo
         indexForFigure={0}
         name={gameState.player0.name}
-        side={socketID === gameState.player0.socketID ? 'start' : 'end'}
         score={gameState.player0.score}
       />
 
@@ -33,7 +32,6 @@ export const SectionInfo: React.FC<IProps> = ({ socketID, gameState }) => {
         indexForFigure={1}
         name={gameState.player1.name}
         score={gameState.player1.score}
-        side={socketID === gameState.player1.socketID ? 'start' : 'end'}
         bgColor="board-bg"
       />
     </div>
