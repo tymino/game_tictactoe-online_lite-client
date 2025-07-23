@@ -4,7 +4,10 @@ import { io, Socket } from 'socket.io-client'
 import { GameRoom } from './pages/GameRoom'
 import { Lobby } from './pages/Lobby'
 
-const socket: Socket = io('http://localhost:4000')
+const URL =
+  process.env.NODE_ENV === 'production' ? undefined : 'http://localhost:4000'
+
+const socket: Socket = io(URL)
 
 interface IPlayer {
   socketID: string
@@ -21,24 +24,7 @@ export interface IGameState {
   winner: -1 | 0 | 1 | null
 }
 
-// const gameState = {
-//   room: 'room-name',
-//   player0: {
-//     socketID: 'QAWeqeqwe',
-//     name: 'Player_1',
-//     score: 0,
-//   },
-//   player1: {
-//     socketID: '23rQAWeq234eqwe',
-//     name: 'Player_2',
-//     score: 0,
-//   },
-//   turn: 0,
-//   board: [0, 1, null, null, 1, null, 0, null, null],
-//   winner: null,
-// }
-
-const App = () => {
+export const App = () => {
   const [inputNameValue, setInputNameValue] = useState<string>('')
   const [socketID, setSocketID] = useState<string>('')
   const [playerName, setPlayerName] = useState<string>('')
@@ -46,16 +32,14 @@ const App = () => {
   const [playerList, setPlayerList] = useState({})
 
   const [game, setGame] = useState<IGameState | null>(null)
-  // const [game, setGame] = useState<IGameState | null>(gameState)
 
   useEffect(() => {
     socket.on('lobby:update', (players) => {
       console.log('lobby:update', socket.id)
 
       if (socket.id) {
-        setPlayerName(players[socket.id]?.name)
-
         setSocketID(socket.id)
+        setPlayerName(players[socket.id]?.name)
         setPlayerList(players)
       }
     })
@@ -63,6 +47,7 @@ const App = () => {
     socket.on('game:start', (gameState: IGameState) => {
       console.log('game:start', gameState.room)
       setGame(gameState)
+      setIsReady(false)
     })
 
     socket.on('game:update', (gameState: IGameState) => {
@@ -73,6 +58,8 @@ const App = () => {
     socket.on('game:close', () => {
       console.log('game:disconect')
       setGame(null)
+
+      socket.emit('lobby:join')
     })
 
     // Очистка слушателей при размонтировании компоненты
@@ -83,14 +70,6 @@ const App = () => {
       socket.off('game:close')
     }
   })
-
-  // const resetGame = () => {
-  //   setBoard(initialBoard)
-  //   setGameStarted(false)
-  //   setWaiting(true)
-  //   setPlayerSymbol(null)
-  //   setIsMyTurn(false)
-  // }
 
   const handleChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInputNameValue(event.target.value)
@@ -138,4 +117,3 @@ const App = () => {
     </div>
   )
 }
-export default App

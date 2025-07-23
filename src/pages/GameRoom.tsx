@@ -35,10 +35,6 @@ export const GameRoom: React.FC<IProps> = ({
 
         <SectionFooter roomName={gameState.room} />
 
-        {/* <button onClick={resetGame} className="mt-2.5">
-          Сбросить игру
-        </button> */}
-
         {gameState.winner !== null && (
           <Modal
             isFirstPlayer={socketID === gameState.player0.socketID}
