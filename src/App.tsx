@@ -5,8 +5,8 @@ import { GameRoom } from './pages/GameRoom'
 import { Lobby } from './pages/Lobby'
 
 const URL =
-  process.env.NODE_ENV === 'production' ? undefined : 'http://localhost:4000'
-
+  (import.meta.env.VITE_PUBLIC_URL as string) || 'http://localhost:4000'
+  
 const socket: Socket = io(URL)
 
 interface IPlayer {
