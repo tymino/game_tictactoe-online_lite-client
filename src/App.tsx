@@ -4,9 +4,8 @@ import { io, Socket } from 'socket.io-client'
 import { GameRoom } from './pages/GameRoom'
 import { Lobby } from './pages/Lobby'
 
-const URL =
-  (import.meta.env.VITE_PUBLIC_URL as string) || 'http://localhost:4000'
-  
+const URL = 'http://localhost:4000'
+
 const socket: Socket = io(URL)
 
 interface IPlayer {
